@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI Bug Fixer - Visual Working Prototype with precision adversarial auditing, root cause analysis, surgical fixing, and hybrid verification.">
+  <title>AI Bug Fixer — Visual Working Prototype</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="brand-badge">
+        <div class="radar-dot"></div>
+        <span class="brand-title">AI Bug Fixer</span>
+        <span class="brand-sub">Adversarial Engine</span>
+      </div>
+      <div class="status-chip" id="system-status">
+        <span class="status-indicator"></span>
+        <span>Engine Active (Node v22)</span>
+      </div>
+    </div>
+    
+    <div class="header-actions">
+      <div class="preset-group">
+        <label for="language-select" class="preset-label">Language:</label>
+        <select id="language-select" class="preset-dropdown" style="min-width: 125px;">
+          <option value="javascript" selected>JavaScript</option>
+          <option value="python">Python</option>
+          <option value="java">Java</option>
+          <option value="c">C</option>
+          <option value="cpp">C++</option>
+        </select>
+      </div>
+      <div class="preset-group">
+        <label for="preset-select" class="preset-label">Load Bug Preset:</label>
+        <select id="preset-select" class="preset-dropdown">
+          <option value="" disabled selected>Loading presets...</option>
+        </select>
+      </div>
+      <button id="btn-run-full-flow" class="btn btn-primary glow-button">
+        <span class="btn-icon">⚡</span> Run Full Flow
+      </button>
+    </div>
+  </header>
+
+  <!-- Interactive 7-Step Pipeline Stepper -->
+  <nav class="pipeline-stepper" aria-label="Pipeline Progress">
+    <div class="step-track">
+      <div class="step-progress-bar" id="step-progress-bar"></div>
+      
+      <button class="step-item active" id="step-btn-1" data-step="1">
+        <div class="step-circle"><span class="step-num">1</span></div>
+        <div class="step-meta">
+          <span class="step-title">Enter Code</span>
+          <span class="step-sub">Input / Preset</span>
+        </div>
+      </button>
+
+      <button class="step-item" id="step-btn-2" data-step="2">
+        <div class="step-circle"><span class="step-num">2</span></div>
+        <div class="step-meta">
+          <span class="step-title">Run Code</span>
+          <span class="step-sub">Observe Failure</span>
+        </div>
+      </button>
+
+      <button class="step-item" id="step-btn-3" data-step="3">
+        <div class="step-circle"><span class="step-num">3</span></div>
+        <div class="step-meta">
+          <span class="step-title">Detect Bug</span>
+          <span class="step-sub">Adversarial Hunter</span>
+        </div>
+      </button>
+
+      <button class="step-item" id="step-btn-4" data-step="4">
+        <div class="step-circle"><span class="step-num">4</span></div>
+        <div class="step-meta">
+          <span class="step-title">Find Cause</span>
+          <span class="step-sub">Skeptic & Referee</span>
+        </div>
+      </button>
+
+      <button class="step-item" id="step-btn-5" data-step="5">
+        <div class="step-circle"><span class="step-num">5</span></div>
+        <div class="step-meta">
+          <span class="step-title">Generate Fix</span>
+          <span class="step-sub">Surgical Patch</span>
+        </div>
+      </button>
+
+      <button class="step-item" id="step-btn-6" data-step="6">
+        <div class="step-circle"><span class="step-num">6</span></div>
+        <div class="step-meta">
+          <span class="step-title">Run Fixed Code</span>
+          <span class="step-sub">Execute Clean</span>
+        </div>
+      </button>
+
+      <button class="step-item" id="step-btn-7" data-step="7">
+        <div class="step-circle"><span class="step-num">7</span></div>
+        <div class="step-meta">
+          <span class="step-title">Verify Fix</span>
+          <span class="step-sub">Hybrid Audit</span>
+        </div>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Split Layout -->
+  <main class="workspace-layout">
+    <!-- Left Panel: Code Workspace -->
+    <section class="panel-card editor-panel">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <span class="terminal-dots"><span></span><span></span><span></span></span>
+          <h2 class="panel-title" id="editor-title">Source Code Editor</h2>
+          <span class="badge" id="editor-badge">Original (Buggy)</span>
+        </div>
+        <div class="panel-toolbar">
+          <button id="btn-toggle-diff" class="btn btn-sm btn-ghost">Show Diff</button>
+          <button id="btn-reset-code" class="btn btn-sm btn-ghost">Reset</button>
+          <button id="btn-run-code" class="btn btn-sm btn-action">
+            <span class="btn-icon">▶</span> Run Code
+          </button>
+        </div>
+      </div>
+
+      <!-- Code Editor View -->
+      <div class="editor-container" id="editor-view-mode">
+        <div class="line-numbers" id="line-numbers">1</div>
+        <textarea id="code-editor" spellcheck="false" placeholder="// Paste or type your buggy JavaScript / Node.js code here..."></textarea>
+      </div>
+
+      <!-- Diff Comparison View (Hidden by default) -->
+      <div class="diff-container hidden" id="diff-view-mode">
+        <div class="diff-split">
+          <div class="diff-column diff-original">
+            <div class="diff-column-header">Original Code (Buggy)</div>
+            <pre><code id="diff-original-code"></code></pre>
+          </div>
+          <div class="diff-column diff-fixed">
+            <div class="diff-column-header">Fixed Code (Verified)</div>
+            <pre><code id="diff-fixed-code"></code></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-footer">
+        <span class="footer-info" id="editor-meta">Lines: 0 | Chars: 0</span>
+        <button id="btn-apply-fix" class="btn btn-sm btn-success hidden">
+          ✓ Apply Fix to Editor
+        </button>
+      </div>
+    </section>
+
+    <!-- Right Panel: Pipeline Inspector & Results -->
+    <section class="panel-card inspector-panel">
+      <!-- Inspector Tabs -->
+      <div class="inspector-tabs">
+        <button class="tab-btn active" id="tab-terminal" data-tab="terminal">
+          <span>Terminal Run</span>
+          <span class="tab-badge" id="terminal-badge">Ready</span>
+        </button>
+        <button class="tab-btn" id="tab-detect" data-tab="detect">
+          <span>Detector</span>
+          <span class="tab-badge warning" id="detect-badge">0 Bugs</span>
+        </button>
+        <button class="tab-btn" id="tab-cause" data-tab="cause">
+          <span>Root Cause</span>
+          <span class="tab-badge" id="cause-badge">Adversarial</span>
+        </button>
+        <button class="tab-btn" id="tab-fix" data-tab="fix">
+          <span>Fix Proposal</span>
+          <span class="tab-badge" id="fix-badge">Patch</span>
+        </button>
+        <button class="tab-btn" id="tab-verify" data-tab="verify">
+          <span>Verification</span>
+          <span class="tab-badge success" id="verify-badge">Audit</span>
+        </button>
+      </div>
+
+      <!-- Tab 1: Terminal & Execution Output -->
+      <div class="inspector-content" id="content-terminal">
+        <div class="terminal-window">
+          <div class="terminal-bar">
+            <span class="terminal-title">Node.js Execution Sandbox</span>
+            <span class="terminal-meta" id="terminal-meta">Status: Idle</span>
+          </div>
+          <div class="terminal-body" id="terminal-output">
+            <div class="terminal-line placeholder">Click "Run Code" or "Run Full Flow" to execute the current code in an isolated Node.js process.</div>
+          </div>
+        </div>
+
+        <div class="stage-actions">
+          <button id="btn-action-step2" class="btn btn-primary">
+            <span>▶ Step 2: Execute Code</span>
+          </button>
+          <button id="btn-action-step3" class="btn btn-secondary">
+            <span>🔍 Next: Detect Bugs</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 2: Bug Detection (Hunter) -->
+      <div class="inspector-content hidden" id="content-detect">
+        <div class="findings-header">
+          <div class="findings-summary" id="findings-summary">Scan your code to identify vulnerabilities and defects.</div>
+          <button id="btn-re-detect" class="btn btn-sm btn-action">Re-scan</button>
+        </div>
+
+        <div class="findings-list" id="findings-container">
+          <div class="empty-state">No scan completed yet. Run code or click "Detect Bugs" to start the Hunter audit.</div>
+        </div>
+
+        <div class="stage-actions">
+          <button id="btn-action-step4" class="btn btn-primary">
+            <span>⚖️ Next: Analyze Root Cause</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 3: Root Cause (Skeptic & Referee) -->
+      <div class="inspector-content hidden" id="content-cause">
+        <div class="cause-card-deck" id="cause-container">
+          <div class="empty-state">Select a detected finding to view the Hunter claim, Skeptic critique, and Referee final binding verdict.</div>
+        </div>
+
+        <div class="stage-actions">
+          <button id="btn-action-step5" class="btn btn-primary">
+            <span>🛠️ Next: Generate Surgical Fix</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 4: Fix Proposal (Fixer) -->
+      <div class="inspector-content hidden" id="content-fix">
+        <div class="fix-overview-card" id="fix-overview">
+          <div class="empty-state">No fix generated yet. Advance the pipeline to generate a surgical remediation patch.</div>
+        </div>
+
+        <div class="stage-actions">
+          <button id="btn-action-step6" class="btn btn-primary">
+            <span>▶ Next: Run Fixed Code</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 5: Hybrid Verification -->
+      <div class="inspector-content hidden" id="content-verify">
+        <div class="verification-dashboard" id="verification-container">
+          <div class="empty-state">Fix has not been verified yet. Complete the fix generation to run the hybrid verifier suite.</div>
+        </div>
+
+        <div class="stage-actions">
+          <button id="btn-action-step7" class="btn btn-success">
+            <span>🛡️ Run Full Hybrid Verification</span>
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Notification Toast -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

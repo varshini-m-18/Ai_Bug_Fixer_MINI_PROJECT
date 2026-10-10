@@ -1,0 +1,15 @@
+{
+  "name": "ai-bug-fixer-for-small-programs",
+  "version": "1.0.0",
+  "description": "Multi-language automated debugging and code repair system for small programs",
+  "type": "commonjs",
+  "main": "web/server.cjs",
+  "scripts": {
+    "start": "node web/server.cjs",
+    "test:runtime": "node web/test-runtime-detection.cjs",
+    "test:syntax": "node web/test-syntax-errors.cjs"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}
